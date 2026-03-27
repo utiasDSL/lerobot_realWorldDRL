@@ -1,0 +1,19 @@
+lerobot-train \
+    --dataset.repo_id=real_0_put_bowl_pi05 \
+	--dataset.root=datasets/continuallearning/real_0_put_bowl_pi05 \
+    --policy.type=pi05 \
+    --output_dir=./outputs/pi05_training_$(date +%Y%m%d_%H%M%S) \
+    --job_name=pi05_training \
+    --policy.repo_id=your_repo_id \
+	--policy.push_to_hub=false \
+    --policy.pretrained_path=lerobot/pi05_base \
+    --policy.compile_model=false \
+    --policy.gradient_checkpointing=true \
+    --wandb.enable=true \
+    --policy.dtype=bfloat16 \
+    --policy.freeze_vision_encoder=true \
+    --policy.train_expert_only=true \
+    --steps=3000 \
+    --policy.device=cuda \
+    --batch_size=1 \
+	--rename_map='{"observation.state_pi05": "observation.state"}'

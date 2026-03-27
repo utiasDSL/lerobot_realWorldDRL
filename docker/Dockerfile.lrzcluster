@@ -78,7 +78,7 @@ RUN if [ "$UNBOUND_DEPS" = "true" ]; then \
     echo "Dependencies unbound:" && cat pyproject.toml; \
     fi
 
-RUN uv pip install --no-cache -e ".[all]"
+RUN uv pip install --no-cache ".[all]"
 
 # Copy the rest of the application code
 # Make sure to have the git-LFS files for testing
