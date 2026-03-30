@@ -21,3 +21,4 @@ lerobot-train \
 	--rename_map='{"observation.state_pi05": "observation.state"}' \
 	--peft.method_type=LORA \
 	--peft.r=64
+	

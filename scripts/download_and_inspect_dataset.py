@@ -17,7 +17,7 @@ from lerobot.utils.utils import init_logging
 # python scripts/download_and_inspect_dataset.py
 
 
-REPO_ID = "continuallearning/real_0_put_bowl"
+REPO_ID = "HuggingFaceVLA/libero"
 ROOT = f"datasets/{REPO_ID}"
 EPISODE_INDEX = 0
 
