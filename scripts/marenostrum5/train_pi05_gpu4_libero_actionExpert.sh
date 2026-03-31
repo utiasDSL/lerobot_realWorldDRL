@@ -1,12 +1,14 @@
 # pi05, xvla: when training the entire model batch size 64 is the maximum with 80GB VRAM
 
+# 6 hours
+
 # cluster
 accelerate launch \
     --multi_gpu \
     --num_processes=4 \
     --mixed_precision="bf16"\
     $(which lerobot-train) \
-    --dataset.repo_id=libero \
+        --dataset.repo_id=libero \
 	--dataset.root=/gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/huggingface/datasets/HuggingFaceVLA/libero \
     --dataset.video_backend=pyav \
     --policy.type=pi05 \
@@ -23,9 +25,10 @@ accelerate launch \
     --policy.freeze_vision_encoder=true \
     --policy.train_expert_only=true \
     --policy.optimizer_lr=3e-5 \
-    --steps=20_000 \
-    --save_freq=5_000 \
+    --steps=10_000 \
+    --save_freq=3_000 \
     --policy.device=cuda \
     --policy.use_amp=true \
-    --batch_size=128 \
+    --batch_size=100 \
 	--policy.n_action_steps=10 \
+    --policy.empty_cameras=1 \

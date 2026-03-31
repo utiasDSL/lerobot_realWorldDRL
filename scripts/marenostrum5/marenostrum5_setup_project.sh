@@ -19,6 +19,7 @@ scp \
 # @local copy the source code to the cluster
 # ATTENTION: the --delete flag will delete all files on the cluster not present locally!!!
 rsync -azP \
+#   --delete \
   --exclude '.claude' \
   --exclude '/lerobot_realWorldDRL/lerobot/datasets/' \
   --exclude '/lerobot_realWorldDRL/lerobot/outputs/' \
@@ -70,22 +71,7 @@ scp -r ~/.cache/huggingface/hub/models--google--paligemma-3b-pt-224 \
 
 
 # @ComputeNode start run
-source /gpfs/projects/ehpc660/oliver_hausdoerfer/envs/lerobot_realWorldDRL/bin/activate
-export HF_HUB_OFFLINE=1
-export HF_DATASETS_OFFLINE=1
-export TRANSFORMERS_OFFLINE=1
-export WANDB_MODE=offline 
-export WANDB_API_KEY=$(awk '/api.wandb.ai/{getline; getline; print $2}' ~/.netrc)
-
-export HF_HUB_CACHE=/gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/huggingface/hub
-export HF_DATASETS_CACHE=/gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/huggingface/datasets
-export HF_LEROBOT_HOME=/gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/huggingface/lerobot
-
-export PYTHONPATH=/home/tum/tum485846/lerobot_realWorldDRL/lerobot_realWorldDRL/lerobot/src:${PYTHONPATH:-}
-export LD_LIBRARY_PATH=/apps/ACC/GCC/15.2.0_nvptx-tools/lib64:/gpfs/projects/ehpc660/oliver_hausdoerfer/envs/lerobot_realWorldDRL/lib:${LD_LIBRARY_PATH:-}
-
-module load ffmpeg/7.0.1-gcc
-
+source scripts/marenostrum5/setup_run.sh
 bash train.sh
 
 # @ComputeNode monitor GPU usage (aim for 100% util. and mem.)
@@ -101,9 +87,21 @@ bash train.sh
 ############### AFTER RUN ###############
 
 #@local Copy runs to local and upload to wandb
-rsync -azP \
-  tum485846@transfer1.bsc.es:/gpfs/projects/ehpc660/oliver_hausdoerfer/outputs/ \
-  /home/admin_07/project_repos/lerobot_realWorldDRL/lerobot/outputs/mn5_outputs
+REMOTE="tum485846@transfer1.bsc.es:/gpfs/projects/ehpc660/oliver_hausdoerfer/outputs"
+LOCAL="/home/admin_07/project_repos/lerobot_realWorldDRL/lerobot/outputs/mn5_outputs"
+RUNS=(
+  "pi05_libero_20260330_231432"
+  "pi05_libero_20260330_231656"
+)
+for run in "${RUNS[@]}"; do
+  rsync -azP -L \
+    --include="checkpoints/" \
+    --include="checkpoints/last/" \
+    --include="checkpoints/last/**" \
+    --exclude="checkpoints/*" \
+    "$REMOTE/$run/" \
+    "$LOCAL/$run/"
+done
 cd /home/admin_07/project_repos/lerobot_realWorldDRL/lerobot/outputs/mn5_outputs
 # python
 for run in $(find . -type d -name "offline-run-*"); do
