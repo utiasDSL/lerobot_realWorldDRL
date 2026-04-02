@@ -1,0 +1,17 @@
+batch_size: 64
+steps: 100000
+save_freq: 100000
+log_freq: 500
+eval_freq: 50000
+dataset:
+  repo_id: lerobot/pusht
+env:
+  type: pusht
+output_dir: ./outputs/ditflow_pusht
+policy:
+  type: ditflow
+  push_to_hub: false
+  optimizer_lr: 2e-4
+wandb:
+  enable: true
+  project: ditflow_test

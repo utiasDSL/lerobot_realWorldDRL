@@ -180,3 +180,4 @@ outputs/
 
 datasets
 *.tar.gz
+eval_logs*

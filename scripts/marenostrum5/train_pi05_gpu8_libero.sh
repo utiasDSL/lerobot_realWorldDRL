@@ -1,6 +1,5 @@
-# pi05, xvla: when training the entire model batch size 64 is the maximum with 80GB VRAM
-
-# 11 hours
+# ~13 hours
+# bs 25 on 64GB, 32 on 80GB
 
 # cluster
 accelerate launch \
@@ -28,7 +27,7 @@ accelerate launch \
     --policy.dtype=bfloat16 \
     --policy.freeze_vision_encoder=false \
     --policy.train_expert_only=false \
-    --policy.optimizer_lr=1e-5 \
+    --policy.optimizer_lr=1.5e-5 \
     --steps=30_000 \
     --save_freq=5_000 \
     --policy.device=cuda \

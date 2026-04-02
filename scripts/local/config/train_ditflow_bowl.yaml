@@ -1,0 +1,15 @@
+batch_size: 64
+steps: 100000
+save_freq: 100000
+log_freq: 500
+dataset:
+  repo_id: continuallearning/real_0_put_bowl
+output_dir: ./outputs/ditflow_putBowl
+policy:
+  type: ditflow
+  push_to_hub: false
+  optimizer_lr: 2e-4
+  crop_shape: [250,250]
+wandb:
+  enable: true
+  project: ditflow_test

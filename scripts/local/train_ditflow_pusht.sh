@@ -1,0 +1,1 @@
+lerobot-train --config_path scripts/config/train_ditflow_pusht.yaml

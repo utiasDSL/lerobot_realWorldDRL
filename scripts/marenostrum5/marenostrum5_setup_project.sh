@@ -12,6 +12,8 @@ scp \
 	tum485846@transfer1.bsc.es:/gpfs/projects/ehpc660/oliver_hausdoerfer/envs
 
 # @CLUSTER: unpack the environment and cleanup
+# cd /gpfs/projects/ehpc660/oliver_hausdoerfer/envs
+# mkdir ./lerobot_realWorldDRL
 # unpack: tar -xzf lerobot_realWorldDRL_env.tar.gz -C ./lerobot_realWorldDRL
 # activate: source /gpfs/projects/ehpc660/oliver_hausdoerfer/envs/lerobot_realWorldDRL/bin/activate
 # cleanup: conda-unpack
@@ -19,7 +21,7 @@ scp \
 # @local copy the source code to the cluster
 # ATTENTION: the --delete flag will delete all files on the cluster not present locally!!!
 rsync -azP \
-#   --delete \
+  # --delete \
   --exclude '.claude' \
   --exclude '/lerobot_realWorldDRL/lerobot/datasets/' \
   --exclude '/lerobot_realWorldDRL/lerobot/outputs/' \
@@ -27,17 +29,18 @@ rsync -azP \
   tum485846@transfer1.bsc.es:/home/tum/tum485846/lerobot_realWorldDRL
 
 # @CLUSTER: install source code into the environment that has previously been activated and unpacked (see above)
+# cd ~
 # pip install --no-deps --no-build-isolation -e ./lerobot_realWorldDRL/lerobot_realWorldDRL/lerobot/
 
 
 # Additional things you might need for your runs:
 # @local Copy dataset. This requires that the path exists on the cluster first.
 scp -r \
-	/home/admin_07/project_repos/lerobot_realWorldDRL/lerobot/datasets/continuallearning/real_0_put_bowl_pi05 \
-	tum485846@transfer1.bsc.es:/gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/huggingface/datasets/continuallearning/real_0_put_bowl_pi05
+	/home/admin_07/project_repos/lerobot_realWorldDRL/lerobot/datasets/continuallearning/real_0_put_bowl \
+	tum485846@transfer1.bsc.es:/gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/huggingface/datasets/continuallearning/real_0_put_bowl
 
 # Copy policy checkpoints from hf.
-# You can download it like this locally first if you need to:
+# You can download it locally first if you need to like this:
 # pip install huggingface_hub
 # huggingface-cli download lerobot/pi05_base
 scp -r \
@@ -46,6 +49,8 @@ scp -r \
 scp -r ~/.cache/huggingface/hub/models--google--paligemma-3b-pt-224 \
   tum485846@transfer1.bsc.es:/gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/huggingface/hub
 
+# Libero assets and config: Currently already available on the cluster at /gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/libero. Please copy the assets and config for your usage. Then, additionally set symbolic link because libero is fundamentally broken: 
+# ln -s /gpfs/projects/ehpc660/oliver_hausdoerfer/runs_root/cache/libero/assets /gpfs/projects/ehpc660/oliver_hausdoerfer/envs/lerobot_realWorldDRL/lib/python3.12/site-packages/libero/libero/assets
 
 ############### START RUN ###############
 # @CLUSTER
@@ -90,8 +95,7 @@ bash train.sh
 REMOTE="tum485846@transfer1.bsc.es:/gpfs/projects/ehpc660/oliver_hausdoerfer/outputs"
 LOCAL="/home/admin_07/project_repos/lerobot_realWorldDRL/lerobot/outputs/mn5_outputs"
 RUNS=(
-  "pi05_libero_20260330_231432"
-  "pi05_libero_20260330_231656"
+  "pi05_bowl_20260401_232730"
 )
 for run in "${RUNS[@]}"; do
   rsync -azP -L \

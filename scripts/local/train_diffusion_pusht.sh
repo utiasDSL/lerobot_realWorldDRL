@@ -1,0 +1,13 @@
+lerobot-train \
+    --output_dir=outputs/diffusion_pusht \
+    --policy.type=diffusion \
+	--policy.push_to_hub=false \
+    --policy.optimizer_lr=2e-4 \
+    --dataset.repo_id=lerobot/pusht \
+    --seed=100000 \
+    --env.type=pusht \
+    --batch_size=256 \
+    --steps=100000 \
+    --eval_freq=50000 \
+    --save_freq=50000 \
+    --wandb.enable=true

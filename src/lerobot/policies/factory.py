@@ -43,6 +43,7 @@ from lerobot.policies.utils import validate_visual_features_consistency
 from lerobot.policies.vqbet.configuration_vqbet import VQBeTConfig
 from lerobot.policies.wall_x.configuration_wall_x import WallXConfig
 from lerobot.policies.xvla.configuration_xvla import XVLAConfig
+from lerobot_policy_ditflow.configuration_ditflow import DiTFlowConfig
 from lerobot.processor import PolicyProcessorPipeline
 from lerobot.processor.converters import (
     batch_to_transition,
@@ -131,6 +132,10 @@ def get_policy_class(name: str) -> type[PreTrainedPolicy]:
         from lerobot.policies.wall_x.modeling_wall_x import WallXPolicy
 
         return WallXPolicy
+    elif name == "ditflow":
+        from lerobot_policy_ditflow.modeling_ditflow import DiTFlowPolicy
+
+        return DiTFlowPolicy
     else:
         try:
             return _get_policy_cls_from_policy_name(name=name)
@@ -181,6 +186,8 @@ def make_policy_config(policy_type: str, **kwargs) -> PreTrainedConfig:
         return XVLAConfig(**kwargs)
     elif policy_type == "wall_x":
         return WallXConfig(**kwargs)
+    elif policy_type == "ditflow":
+        return DiTFlowConfig(**kwargs)
     else:
         try:
             config_cls = PreTrainedConfig.get_choice_class(policy_type)
@@ -387,6 +394,14 @@ def make_pre_post_processors(
         from lerobot.policies.wall_x.processor_wall_x import make_wall_x_pre_post_processors
 
         processors = make_wall_x_pre_post_processors(
+            config=policy_cfg,
+            dataset_stats=kwargs.get("dataset_stats"),
+        )
+
+    elif isinstance(policy_cfg, DiTFlowConfig):
+        from lerobot_policy_ditflow.processor_ditflow import make_ditflow_pre_post_processors
+
+        processors = make_ditflow_pre_post_processors(
             config=policy_cfg,
             dataset_stats=kwargs.get("dataset_stats"),
         )
