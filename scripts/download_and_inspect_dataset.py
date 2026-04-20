@@ -26,7 +26,7 @@ def main():
     init_logging()
 
     # Download full dataset locally
-    print(f"Downloading dataset: {REPO_ID} to {ROOT}/...")
+    print(f"Downloading  dataset: {REPO_ID} to {ROOT}/...")
     dataset = LeRobotDataset(REPO_ID, root=ROOT)
 
     # Print metadata summary

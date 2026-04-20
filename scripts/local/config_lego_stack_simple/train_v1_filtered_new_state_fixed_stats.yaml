@@ -1,0 +1,19 @@
+batch_size: 100
+steps: 50000
+save_freq: 10000
+log_freq: 500
+job_name: diffusion_stack_lego_simple_v1_filtered_new_state_fixed_stats
+dataset:
+  repo_id: stack_lego_simple_v1_filtered_new_state_fixed_stats
+  root: datasets/OliverHausdoerfer/stack_lego_simple_v1_filtered_new_state_fixed_stats
+  image_transforms:
+    enable: true
+output_dir: ./outputs/diffusion_lego_simple_filtered_new_state_fixed_stats_v1
+policy:
+  type: diffusion
+  push_to_hub: true
+  optimizer_lr: 2e-4
+  repo_id: diffusion_lego_simple_filtered_new_state_fixed_stats_v1
+wandb:
+  enable: true
+  project: realWorldDRL

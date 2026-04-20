@@ -1,0 +1,22 @@
+batch_size: 100
+steps: 50000
+save_freq: 10000
+log_freq: 500
+job_name: diffusion_stack_lego_simple_v1_filtered_new_state_randomCropRgbEncoders
+dataset:
+  repo_id: stack_lego_simple_v1_filtered_new_state
+  root: datasets/OliverHausdoerfer/stack_lego_simple_v1_filtered_new_state
+  image_transforms:
+    enable: false
+output_dir: ./outputs/diffusion_lego_simple_filtered_new_state_randomCropRgbEncoders_v1
+policy:
+  type: diffusion
+  push_to_hub: true
+  optimizer_lr: 2e-4
+  repo_id: diffusion_lego_simple_filtered_new_state_randomCropRgbEncoders_v1
+  crop_shape: [245, 245]
+  crop_is_random: true
+  use_separate_rgb_encoder_per_camera: true
+wandb:
+  enable: true
+  project: realWorldDRL

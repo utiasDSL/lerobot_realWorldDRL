@@ -1,0 +1,20 @@
+batch_size: 128
+steps: 100000
+save_freq: 10000
+log_freq: 500
+job_name: ditflow_stack_lego_simple_v1_filtered_new_state_100k
+dataset:
+  repo_id: stack_lego_simple_v1_filtered_new_state
+  root: datasets/OliverHausdoerfer/stack_lego_simple_v1_filtered_new_state
+  image_transforms:
+    enable: true
+output_dir: ./outputs/ditflow_lego_simple_filtered_new_state_v1_100k
+policy:
+  type: ditflow
+  push_to_hub: true
+  optimizer_lr: 2e-4
+  repo_id: ditflow_lego_simple_filtered_new_state_v1_100k
+wandb:
+  enable: true
+  project: realWorldDRL
+  mode: offline
