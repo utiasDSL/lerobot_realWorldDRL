@@ -20,6 +20,18 @@ from lerobot.configs.policies import PreTrainedConfig
 from lerobot.datasets.lerobot_dataset import LeRobotDataset
 from lerobot.policies.factory import get_policy_class, make_pre_post_processors
 
+# TEMP DEBUG: tensor stats helper (from crisp_gym.policy.lerobot_policy._tensor_stats)
+def _tensor_stats(t):
+    try:
+        if hasattr(t, "shape"):
+            if hasattr(t, "float"):
+                f = t.float()
+                return f"shape={tuple(t.shape)} dtype={t.dtype} min={f.min().item():.4g} max={f.max().item():.4g} mean={f.mean().item():.4g}"
+            return f"shape={tuple(t.shape)} dtype={t.dtype} min={float(t.min()):.4g} max={float(t.max()):.4g} mean={float(t.mean()):.4g}"
+    except Exception as e:
+        return f"<stats failed: {e}>"
+    return f"<no shape: type={type(t).__name__}>"
+
 # ── Config ─────────────────────────────────────────────────────────────────────
 CHECKPOINT = "OliverHausdoerfer/pi05_stack_lego_simple_20260418"
 DATASET_REPO = "OliverHausdoerfer/stack_lego_simple_v1_filtered_new_state_fixed_stats"
@@ -88,12 +100,57 @@ for ep_idx in EPISODES:
         gt_list.append(sample["action"].numpy())
 
         obs = make_obs(sample)
+
+        # TEMP DEBUG — dump once on first frame of first episode
+        if ep_idx == EPISODES[0] and i == 0:
+            print("\n========== TEMP DEBUG: raw sample ==========")
+            for k in [
+                "observation.images.primary",
+                "observation.images.wrist",
+                "observation.state",
+                "observation.state.gripper",
+                "observation.state.sensors_bota_ft_sensor",
+                "action",
+            ]:
+                if k in sample:
+                    print(f"  sample[{k!r}] {_tensor_stats(sample[k])}")
+                else:
+                    print(f"  sample[{k!r}] MISSING")
+            print("========== TEMP DEBUG: obs dict ==========")
+            for k, v in obs.items():
+                if hasattr(v, "shape"):
+                    print(f"  obs[{k!r}] {_tensor_stats(v)}")
+                else:
+                    print(f"  obs[{k!r}] type={type(v).__name__} value={v!r}")
+
         obs_proc = preprocessor(obs)
+
+        if ep_idx == EPISODES[0] and i == 0:
+            print("========== TEMP DEBUG: obs_proc (post-preprocessor) ==========")
+            if isinstance(obs_proc, dict):
+                for k in sorted(obs_proc.keys()):
+                    v = obs_proc[k]
+                    if hasattr(v, "shape"):
+                        print(f"  obs_proc[{k!r}] {_tensor_stats(v)}")
+                    else:
+                        print(f"  obs_proc[{k!r}] type={type(v).__name__} value={v!r}")
+            else:
+                print(f"  obs_proc type={type(obs_proc).__name__}")
 
         with torch.inference_mode():
             pred = policy.select_action(obs_proc)
 
+        if ep_idx == EPISODES[0] and i == 0:
+            print(f"========== TEMP DEBUG: raw pred ==========")
+            print(f"  pred {_tensor_stats(pred)}")
+
         pred = postprocessor(pred)
+
+        if ep_idx == EPISODES[0] and i == 0:
+            print(f"========== TEMP DEBUG: post-postprocessor pred ==========")
+            print(f"  pred {_tensor_stats(pred)}")
+            print("========== END TEMP DEBUG ==========\n")
+
         pred_list.append(pred.squeeze(0).cpu().numpy())
 
         if i % 100 == 0:
